@@ -6,6 +6,7 @@ import type { Components, Theme } from '@mui/material/styles'
 import Button from "./Button"
 import CheckBox from "./CheckBox";
 import Radio from "./Radio";
+import Select from "./Select";
 
 const AppComponentsOverrides = (theme : Theme): Components<Theme> => {
     return merge(
@@ -13,6 +14,7 @@ const AppComponentsOverrides = (theme : Theme): Components<Theme> => {
         Button(theme),
         CheckBox(theme),
         Radio(theme),
+        Select(theme),
     ) as Components<Theme>
 }
 
