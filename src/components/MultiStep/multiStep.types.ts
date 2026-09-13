@@ -5,5 +5,5 @@ export type MultiStepItem = {
 
 export type MultiStepProps = {
     activeStepIndex: number
-    steps: MultiStepItem[]
+    steps: readonly MultiStepItem[]
 }
