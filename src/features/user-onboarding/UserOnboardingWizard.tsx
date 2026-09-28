@@ -1,11 +1,23 @@
+//React imports
 import { lazy } from 'react';
+//Components imports
 import MultiStep from '@components/MultiStep'
-import Container from '@mui/material/Container'
 import { ONBOARDING_STEPS, type OnboardingStepId } from './constants/onboarding.constants'
+//Hooks imports
 import { useMultiStep } from '@components/MultiStep'
+//MUI imports
+import Container from '@mui/material/Container'
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box'
+//Styles imports
 import { OnboardingWizardContainerStyles, OnboardingWizardControlsStyles } from './userOnboardingStyles';
+//Hook Form imports
+import { useForm } from 'react-hook-form';
+//Zod imports
+import { zodResolver } from '@hookform/resolvers/zod'
+//Form types/schemas imports
+import { OnboardingRegistrationValues, type OnboardingRegistrationSchema } from './schemas/onboarding.schema'
+
 
 /*Onboarding steps components mapping */
 const STEP_COMPONENTS: Record<OnboardingStepId, React.LazyExoticComponent<React.FC>> = {
@@ -16,22 +28,21 @@ const STEP_COMPONENTS: Record<OnboardingStepId, React.LazyExoticComponent<React.
 
 const UserOnboardingWizard = () => {
 
-  const { activeStepIndex, goToNextStep, goToPreviousStep } = useMultiStep();
+  const { activeStepIndex, goToNextStep, goToPreviousStep} = useMultiStep({ steps: [...ONBOARDING_STEPS] });
+  const formMethods = useForm<OnboardingRegistrationSchema>({
+    resolver: zodResolver(OnboardingRegistrationValues),
+  });
 
-  const isFirstStep = activeStepIndex === 0;
-  const isLastStep = activeStepIndex === ONBOARDING_STEPS.length - 1;
+  const { trigger, handleSubmit } = formMethods;
+
   const ActiveComponent = STEP_COMPONENTS[ONBOARDING_STEPS[activeStepIndex].id];
 
   const OnclickPrev = () => {
-    if(!isFirstStep) {
-      goToPreviousStep();
-    }
+    goToPreviousStep();
   };
 
   const OnclickNext = () => {
-    if(!isLastStep) {
-      goToNextStep();
-    }
+    goToNextStep();
   };
 
   return (

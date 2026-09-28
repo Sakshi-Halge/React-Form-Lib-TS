@@ -1,15 +1,22 @@
 import { z } from 'zod'
+import { phoneRegex } from '@/utils/formRegex'
+import {
+  GENDER_OPTIONS,
+  NATIONALITY_OPTIONS,
+} from '../constants/onboarding.constants'
 
-const phoneRegex = /^\+?[0-9\s\-()]{7,20}$/
+const genderValues = GENDER_OPTIONS.map((option) => option.value) as [string, ...string[]]
+const nationalityValues = NATIONALITY_OPTIONS.map((option) => option.value) as [string, ...string[]]
 
-export const PersonalInfoSchema = z.object({
+
+export const PersonalInfoValues = z.object({
   firstName: z
     .string()
     .trim()
     .min(2, 'First name must be at least 2 characters')
     .max(50, 'First name is too long'),
   lastName: z
-    .string()
+    .string()  
     .trim()
     .min(2, 'Last name must be at least 2 characters')
     .max(50, 'Last name is too long'),
@@ -22,11 +29,15 @@ export const PersonalInfoSchema = z.object({
       const date = new Date(value)
       return !Number.isNaN(date.getTime()) && date <= new Date()
     }, 'Date of birth must be a valid past date'),
-  gender: z.string().trim().min(1, 'Please select a gender').optional(),
-  nationality: z.string().trim().min(2, 'Nationality is required').optional(),
+  gender: z.enum(genderValues, {
+    message: 'Please select a valid gender',
+  }).optional(),
+  nationality: z.enum(nationalityValues, {
+    message: 'Please select a valid nationality',
+  }),
 })
 
-export const ProfessionalInfoSchema = z.object({
+export const ProfessionalInfoValues = z.object({
   jobTitle: z
     .string()
     .trim()
@@ -42,7 +53,7 @@ export const ProfessionalInfoSchema = z.object({
     .trim()
     .min(2, 'Industry is required')
     .max(80, 'Industry is too long'),
-  yearsOfExperience: z.coerce
+  yearsOfExperience: z
     .number()
     .int('Experience must be a whole number')
     .min(0, 'Experience cannot be negative')
@@ -53,7 +64,7 @@ export const ProfessionalInfoSchema = z.object({
   department: z.string().trim().min(2, 'Department is required').optional(),
 })
 
-export const ContactInfoSchema = z.object({
+export const ContactInfoValues = z.object({
   email: z.string().trim().min(1, 'Email is required').email('Please enter a valid email address'),
   phone: z
     .string()
@@ -68,13 +79,13 @@ export const ContactInfoSchema = z.object({
   country: z.string().trim().min(2, 'Country is required').max(100),
 })
 
-export const OnboardingRegistrationSchema = z.object({
-  personalInfo: PersonalInfoSchema,
-  professionalInfo: ProfessionalInfoSchema,
-  contactInfo: ContactInfoSchema,
+export const OnboardingRegistrationValues = z.object({
+  personalInfo: PersonalInfoValues,
+  professionalInfo: ProfessionalInfoValues,
+  contactInfo: ContactInfoValues,
 })
 
-export type PersonalInfoValues = z.infer<typeof PersonalInfoSchema>
-export type ProfessionalInfoValues = z.infer<typeof ProfessionalInfoSchema>
-export type ContactInfoValues = z.infer<typeof ContactInfoSchema>
-export type OnboardingRegistrationValues = z.infer<typeof OnboardingRegistrationSchema>
+export type PersonalInfoSchema = z.infer<typeof PersonalInfoValues>
+export type ProfessionalInfoSchema = z.infer<typeof ProfessionalInfoValues>
+export type ContactInfoSchema = z.infer<typeof ContactInfoValues>
+export type OnboardingRegistrationSchema = z.infer<typeof OnboardingRegistrationValues>
