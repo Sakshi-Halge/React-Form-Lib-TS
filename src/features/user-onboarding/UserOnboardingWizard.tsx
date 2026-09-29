@@ -48,6 +48,8 @@ const UserOnboardingWizard = () => {
     goToNextStep();
   };
 
+  console.log("Active Step Index:", activeStepIndex);
+
   const onSubmit = () => {
     console.log(getValues());
   };
