@@ -9,7 +9,7 @@ const genderValues = GENDER_OPTIONS.map((option) => option.value) as [string, ..
 const nationalityValues = NATIONALITY_OPTIONS.map((option) => option.value) as [string, ...string[]]
 
 
-export const PersonalInfoValues = z.object({
+export const PersonalInfoSchema = z.object({
   firstName: z
     .string()
     .trim()
@@ -37,7 +37,7 @@ export const PersonalInfoValues = z.object({
   }),
 })
 
-export const ProfessionalInfoValues = z.object({
+export const ProfessionalInfoSchema = z.object({
   jobTitle: z
     .string()
     .trim()
@@ -64,7 +64,7 @@ export const ProfessionalInfoValues = z.object({
   department: z.string().trim().min(2, 'Department is required').optional(),
 })
 
-export const ContactInfoValues = z.object({
+export const ContactInfoSchema = z.object({
   email: z.string().trim().min(1, 'Email is required').email('Please enter a valid email address'),
   phone: z
     .string()
@@ -79,13 +79,11 @@ export const ContactInfoValues = z.object({
   country: z.string().trim().min(2, 'Country is required').max(100),
 })
 
-export const OnboardingRegistrationValues = z.object({
-  personalInfo: PersonalInfoValues,
-  professionalInfo: ProfessionalInfoValues,
-  contactInfo: ContactInfoValues,
+export const OnboardingRegistrationSchema = z.object({
+  personalInfo: PersonalInfoSchema,
+  professionalInfo: ProfessionalInfoSchema,
+  contactInfo: ContactInfoSchema,
 })
 
-export type PersonalInfoSchema = z.infer<typeof PersonalInfoValues>
-export type ProfessionalInfoSchema = z.infer<typeof ProfessionalInfoValues>
-export type ContactInfoSchema = z.infer<typeof ContactInfoValues>
-export type OnboardingRegistrationSchema = z.infer<typeof OnboardingRegistrationValues>
+
+export type OnboardingRegistrationFormValuesType = z.infer<typeof OnboardingRegistrationSchema>

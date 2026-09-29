@@ -12,11 +12,14 @@ import Box from '@mui/material/Box'
 //Styles imports
 import { OnboardingWizardContainerStyles, OnboardingWizardControlsStyles } from './userOnboardingStyles';
 //Hook Form imports
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 //Zod imports
 import { zodResolver } from '@hookform/resolvers/zod'
 //Form types/schemas imports
-import { OnboardingRegistrationValues, type OnboardingRegistrationSchema } from './schemas/onboarding.schema'
+import {
+  OnboardingRegistrationSchema,
+  type OnboardingRegistrationFormValuesType,
+} from './schemas/onboarding.schema'
 
 
 /*Onboarding steps components mapping */
@@ -28,12 +31,12 @@ const STEP_COMPONENTS: Record<OnboardingStepId, React.LazyExoticComponent<React.
 
 const UserOnboardingWizard = () => {
 
-  const { activeStepIndex, goToNextStep, goToPreviousStep} = useMultiStep({ steps: [...ONBOARDING_STEPS] });
-  const formMethods = useForm<OnboardingRegistrationSchema>({
-    resolver: zodResolver(OnboardingRegistrationValues),
+  const { activeStepIndex, goToNextStep, goToPreviousStep, isLastStep, isFirstStep} = useMultiStep({ steps: [...ONBOARDING_STEPS] });
+  const formMethods = useForm<OnboardingRegistrationFormValuesType >({
+    resolver: zodResolver(OnboardingRegistrationSchema),
   });
 
-  const { trigger, handleSubmit } = formMethods;
+  const { handleSubmit, getValues } = formMethods;
 
   const ActiveComponent = STEP_COMPONENTS[ONBOARDING_STEPS[activeStepIndex].id];
 
@@ -45,18 +48,32 @@ const UserOnboardingWizard = () => {
     goToNextStep();
   };
 
+  const onSubmit = () => {
+    console.log(getValues());
+  };
+
   return (
     <Container sx={OnboardingWizardContainerStyles}>
-        <MultiStep activeStepIndex={activeStepIndex} steps={ONBOARDING_STEPS} />
-        <ActiveComponent />
-        <Box sx={OnboardingWizardControlsStyles}>
-            <Button onClick={OnclickPrev} variant="outlined">
-                Previous
-            </Button>
-            <Button onClick={OnclickNext} variant="contained">
-                Next
-            </Button>
-        </Box>
+      <FormProvider {...formMethods}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <MultiStep activeStepIndex={activeStepIndex} steps={ONBOARDING_STEPS} />
+          <ActiveComponent />
+          <Box sx={OnboardingWizardControlsStyles}>
+              <Button type="button" onClick={OnclickPrev} disabled={isFirstStep} variant="outlined">
+                  Previous
+              </Button>
+              {
+                isLastStep ? (
+                  <Button type="submit" variant="contained">
+                      Submit
+                  </Button>
+                ) : <Button type="button" onClick={OnclickNext} variant="contained">
+                      Next
+                  </Button>
+              }
+          </Box>
+        </form>
+      </FormProvider>
     </Container>
   )
 }
