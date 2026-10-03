@@ -13,6 +13,8 @@ const useMultiStep = ({ steps } : { steps: readonly MultiStepItem[] }) => {
         }
     }
 
+    console.log("Console.log from useMultiStep");
+
     const goToPreviousStep = () => {
         if (activeStepIndex > 0) {
             setActiveStepIndex((prevIndex) => prevIndex - 1);
